@@ -8,7 +8,7 @@ News module of rate-assistant app
 	- this link: http://3g.163.com/touch/reconstruct/article/list/BA8EE5GMwangning/0-10.html
 	- sohu: no cover img, http://m.sohu.com/cr/5
 POST:[title, puddata, source, cover, url, lan, content]
-- Japanese: yahoo.co.jp http://headlines.yahoo.co.jp/rss/list
+- Japanese: yahoo.co.jp http://news.yahoo.co.jp/hl?c=bus&p=1
 - English: google https://news.google.com/news
 
 ##author

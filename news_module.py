@@ -11,6 +11,9 @@ import httplib
 from bs4 import BeautifulSoup
 import util
 
+
+cover_default = "http://thietbidetnhuom.com/upload/images/tin-tuc.jpg"
+
 class Crawler_163(util.Crawler):
 	'''
 	Extends Crawler
@@ -111,9 +114,67 @@ class Crawler_sina(util.Crawler):
 		for url in self.getNewsList(url):
 			result.append(self.getNews(url))
 
+class Crawler_yahoo(util.Crawler):
+	'''
+	Extends Crawler
+	'''
+	def getNewsList(self, url):
+		'''
+		Get News url list from news list page
+		url
+		return list[]
+		'''
+		urlList = []
+		# urls from page 1 to 5
+		pages = []
+		for i in range(5):
+			pages.append(self.getSoupContent(url + str(i)))
+		
+		for html in pages:
+			for li in html.find("ul", { "class" : "list" }).find_all("li"):
+				link = li.a.get("href")
+				# print "url:" + link
+				global cover_default
+				cover = cover_default
+				hasCover = li.find("div", {"class": "thumb"})
+				if hasCover is not None:
+					cover = hasCover.img.get("src")
+
+				urlList.append({"link": link, "cover": cover})
+		return urlList
+
+	def getNews(self, url):
+		'''
+		Get news content from a url
+		return news content: attribute json
+		'''
+		# article element 
+		print "url: " + url["link"]
+		html = self.getSoupContent(url["link"]).find('article')
+		# article splited to title, pubdate, source, cover, link, lan, content
+		title = html.find("h1", { "class" : "title" }).get_text()
+		pubdate = html.find("p", {"class": "subText"}).time.get_text()[:-2]
+		source = html.find("p", {"class": "subText"}).a.get_text()
+		cover = url["cover"]
+		link = url["link"]
+		lan = "ja"
+		content = html.find("div", {"class": "pgraphWrap"}).find("p", {"class": "text"}).get_text()
+		
+		return util.News(title, pubdate, source, cover, link, lan, content)
+
+	def do(self):
+		url = "http://news.yahoo.co.jp/hl?c=bus&p="
+		result = []
+		for url in self.getNewsList(url):
+			result.append(self.getNews(url))
+		print type(result)
+		self.writeToFile("yahooNewsResult.txt", result)
+
+	
+
 
 def main():
-	crawler1 = Crawler_sina()
+	crawler1 = Crawler_yahoo()
 	crawler1.do()
 
 if __name__ == "__main__": main()
