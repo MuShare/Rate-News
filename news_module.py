@@ -14,6 +14,71 @@ import util
 
 cover_default = "http://thietbidetnhuom.com/upload/images/tin-tuc.jpg"
 
+class Crawler_FX168(util.Crawler):
+	'''
+	Extends Crawler
+	'''
+	def getNewsList(self, url):
+		'''
+		Get News url list from news list page
+		url
+		return list[]
+		'''
+		urlList = []
+		html = self.getSoupContent(url)
+		newsList = html.find("div", { "class" : "yjl_zixunList" })
+		print len(newsList)
+		for li in newsList.find_all("li"):
+			# print "section"
+			for a in li.find_all('a'):
+				link = a.get('href')
+				print link
+				urlList.append({"link": link, "cover": a.find("img").get("src")})
+
+	def getNews(self, url):
+		'''
+		Get news content from a url
+		return news content: attribute json
+		'''
+		# article element 
+		html = self.getSoupContent(url["link"]).find("div", {"class": "yjl_rili_content"})
+		# article splited to title, pubdate, source, cover, link, lan, content
+		title = html.find("h1").get_text()
+		info = html.find("h3").find_all("span")
+		pubdate = info[1].get_text()
+		source = info[2].get_text()
+		cover = url["cover"]
+		link = url
+		lan = "zh-cn"
+		content = []
+		contentSoup = html.find("div", {"class": "TRS_Editor"})
+		for element in contentSoup.find_all():
+			if element["align"] == 'justify':
+				content.append({"type": "para", "value": element.get_text()})
+			elif element["align"] == 'center':
+				relaUrl = element.find("img").get("src")
+				img = self.imageAbsolutePath(link) + relaUrl[1:]  
+				content.append({"type": "image", "value": img})
+
+		return News(title, pubdate, source, cover, link, lan, content)
+
+	def imageAbsolutePath(self, url):
+		
+		i = len(url) - 1
+		while i >= 0:
+			if url[i] == '/':
+				break;
+			i -= 1
+		return url[:i]
+	def do(self):
+		url = "http://wap.fx168.com/m/news/"
+		result = []
+		for url in self.getNewsList(url):
+			result.append(self.getNews(url))
+
+		self.writeToFile("FX168NewsResult.txt", result)
+
+
 class Crawler_163(util.Crawler):
 	'''
 	Extends Crawler
@@ -174,7 +239,7 @@ class Crawler_yahoo(util.Crawler):
 
 
 def main():
-	crawler1 = Crawler_yahoo()
+	crawler1 = Crawler_FX168()
 	crawler1.do()
 
 if __name__ == "__main__": main()
