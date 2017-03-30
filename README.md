@@ -21,4 +21,7 @@ xiao tang
 - web content storage method:attribute json 
 - Need to catch the Json package or some other files the host returned that contains Newslist
 
+## New discoveries
+- New crawling local file in Chrome network, json files
+	- http://wap.fx168.com/m/mbcf/news/fx168_cpb_zixun_suoyouxinxi_json.html [title, url, imgurl]
 ##Project construction
