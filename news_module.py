@@ -62,14 +62,14 @@ class Crawler_FX168(util.Crawler):
 
 		return News(title, pubdate, source, cover, link, lan, content)
 
-	def imageAbsolutePath(self, url):
-		
+	def imageAbsolutePath(self, url):		
 		i = len(url) - 1
 		while i >= 0:
 			if url[i] == '/':
 				break;
 			i -= 1
 		return url[:i]
+
 	def do(self):
 		url = "http://wap.fx168.com/m/news/"
 		result = []
@@ -234,9 +234,6 @@ class Crawler_yahoo(util.Crawler):
 			result.append(self.getNews(url))
 		print type(result)
 		self.writeToFile("yahooNewsResult.txt", result)
-
-	
-
 
 def main():
 	crawler1 = Crawler_FX168()
