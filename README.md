@@ -19,6 +19,7 @@ POST:[title, puddata, source, cover, url, lan, content]
 - python post to JAVAweb API (http request)
 - web content storage method:attribute json 
 - Need to catch the Json package or some other files the host returned that contains Newslist
+- Assign Priority value to each link that is going to be crawlled and deprioritize similar web links 
 
 ## New discoveries
 - New crawling local file in Chrome network, json files
